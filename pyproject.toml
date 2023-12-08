@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "attendance-management"
+version = "0.1.0"
+description = ""
+authors = ["kizataka <chongxiongmu@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
+pydantic = "^2.5.2"
+fastapi = "^0.104.1"
+requests = "^2.31.0"
+pandas = "^2.1.3"
+streamlit = "^1.29.0"
+sqlalchemy = "^2.0.23"
+uvicorn = "^0.24.0.post1"
+alembic = "^1.13.0"
+streamlit-option-menu = "^0.3.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
