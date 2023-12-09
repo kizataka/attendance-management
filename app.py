@@ -11,6 +11,7 @@ backend_url = 'http://127.0.0.1:8000'
 
 st.title('勤怠管理アプリ')
 
+# メニュー欄
 with st.sidebar:
     selected = option_menu('Main Menu', ['勤怠入力', '勤怠管理', '従業員登録'],
                            icons=['pencil-square', 'table', 'person-plus-fill'],
@@ -20,6 +21,7 @@ with st.sidebar:
 if selected == '勤怠入力':
     st.header('[勤怠入力ページ]')
 
+    # 従業員データを取得
     response = requests.get(f'{backend_url}/users/')
     if response.status_code == 200:
         users = response.json()
@@ -31,13 +33,17 @@ if selected == '勤怠入力':
     user_name = st.selectbox('氏名を選択してください', options=list(user_names.values()), key='user')
     st.write('')
 
+    # 出退勤の打刻
     if user_name:
         st.write('出勤、または退勤ボタンを押して打刻してください')
         st.write('')
-        start_button = st.button('出勤', type='primary', use_container_width=True)
+
+        start_button = st.button('出勤', type='primary', use_container_width=True)  # 出勤ボタン
+
         st.write('')
         st.write('')
-        end_button = st.button('退勤', use_container_width=True)
+
+        end_button = st.button('退勤', use_container_width=True)  # 退勤ボタン
 
         # 出勤時刻の記録
         if start_button:
@@ -74,6 +80,7 @@ elif selected == '勤怠管理':
     st.write('')
     st.markdown('##### ここでは各従業員の勤務データを確認できます')
 
+    # デフォルトの日付範囲をアプリを開いた月に設定するための定義
     today = datetime.date.today()
     first_day_of_month = datetime.date(today.year, today.month, 1)
     first_day_of_next_month = datetime.date(today.year + (today.month // 12), ((today.month % 12) + 1), 1)
@@ -86,8 +93,7 @@ elif selected == '勤怠管理':
     else:
         users = []
 
-    # 従業員の名前リスト
-    user_names = {user['user_id']: user['name'] for user in users}
+    user_names = {user['user_id']: user['name'] for user in users}  # 従業員の名前リスト
 
     # 勤務データ検索フォーム
     with st.form('input_data'):
@@ -98,31 +104,24 @@ elif selected == '勤怠管理':
         st.write('設定が完了したら以下の検索ボタンを押してください')
         submit_button = st.form_submit_button('検索', type='primary', use_container_width=True)
 
+    # 検索結果を表示
     if submit_button:
         if user_name and from_to:
-            # 指定された従業員のIDを取得
-            selected_user_id = [user_id for user_id, name in user_names.items() if name == user_name][0]
-            # 日付範囲の設定
-            start_date, end_date = from_to
+            selected_user_id = [user_id for user_id, name in user_names.items() if name == user_name][0]  # 指定された従業員のIDを取得
+            start_date, end_date = from_to  # 日付範囲の設定
 
-            # 指定された従業員の勤務データを取得
-            attendance_response = requests.get(f'{backend_url}/attendance/{selected_user_id}')
+            attendance_response = requests.get(f'{backend_url}/attendance/{selected_user_id}')  # 指定された従業員の勤務データを取得
             
             if attendance_response.status_code == 200:
                 attendance_records = attendance_response.json()
-
-
-                # 日付範囲による絞り込み
-                filtered_records = [record for record in attendance_records if start_date <= datetime.datetime.strptime(record['date'], '%Y-%m-%d').date() <= end_date]
+                filtered_records = [record for record in attendance_records if start_date <= datetime.datetime.strptime(record['date'], '%Y-%m-%d').date() <= end_date]  # 日付範囲による絞り込み
                 
-                # 該当するデータがある場合
-                if len(filtered_records) > 0:
+                if len(filtered_records) > 0:  # 該当するデータがある場合
                     st.write('')
                     st.markdown(f'##### {user_name}さんの{start_date}から{end_date}の勤務状況を表示しています')
                     st.write('')
 
-                    # データフレームの作成
-                    df_user = pd.DataFrame(filtered_records)
+                    df_user = pd.DataFrame(filtered_records)  # データフレームの作成
                     df_user['time_in'] = df_user['time_in'].apply(lambda x: pd.to_datetime(x).strftime('%H:%M:%S'))
                     df_user['time_out'] = df_user['time_out'].apply(lambda x: pd.to_datetime(x).strftime('%H:%M:%S') if pd.notnull(x) else None)
                     df_user['working_hours'] = df_user.apply(lambda row: (datetime.datetime.strptime(row['time_out'], '%H:%M:%S') - datetime.datetime.strptime(row['time_in'], '%H:%M:%S')).total_seconds() / 3600 if row['time_out'] is not None else None, axis=1)
@@ -179,24 +178,23 @@ elif selected == '勤怠管理':
                         out_xlsx = byte_xlsx.getvalue()
                         return out_xlsx
                     
+                    # データフレームをエクセルとしてダウンロード
                     xlsx = df_to_xlsx(df_user)
                     st.download_button(label="Excelファイルとしてダウンロード", data=xlsx, file_name=f"{user_name}_{start_date}_{end_date}.xlsx")
 
-                # 該当するデータがない場合
-                else:
+                else:   # 該当するデータがない場合
                     st.warning('該当するデータはありません')
-
             else:
                 st.error('データの取得に失敗しました')
                 st.write("レスポンスコード:", attendance_response.status_code)
                 st.write("レスポンス内容:", attendance_response.json())
-                st.write(attendance_response)
 
 elif selected == '従業員登録':
     st.header('[従業員登録ページ]')
     st.write('')
     st.markdown('##### ここでは勤怠管理に使用する従業員の情報を登録することができます')
 
+    # 従業員データの登録
     with st.form('input_data'):
         st.markdown('#### 従業員登録フォーム')
         name = st.text_input(label='氏名を入力してください')
@@ -225,6 +223,8 @@ elif selected == '従業員登録':
                 st.warning('氏名と時給の両方を記入してください')
 
     st.write('')
+
+    # 従業員一覧の表示
     st.markdown('#### 従業員一覧')
 
     users_response = requests.get(f'{backend_url}/users/')
