@@ -20,7 +20,8 @@ class User(BaseModel):
 class AttendanceCreate(BaseModel):
     user_id: int
     time_in: Optional[datetime]
-    time_out: Optional[datetime]
+    # time_out: Optional[datetime]  # ローカル
+    time_out: Optional[datetime] = None  # 本番
 
 # 出退勤情報取得用スキーマ
 class Attendance(BaseModel):
