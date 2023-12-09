@@ -6,6 +6,7 @@ import streamlit as st
 import json
 import datetime
 import math
+import pytz
 
 # backend_url = 'http://127.0.0.1:8000'  # ローカル用
 backend_url = 'https://attendance-management-backend-i4os.onrender.com'  # 本番用
@@ -122,9 +123,19 @@ elif selected == '勤怠管理':
                     st.markdown(f'##### {user_name}さんの{start_date}から{end_date}の勤務状況を表示しています')
                     st.write('')
 
+                    # UTCからJSTに変換する関数
+                    def utc_to_jst(utc_time_str):
+                        if utc_time_str:
+                            utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S.%f')
+                            utc_time = utc_time.replace(tzinfo=pytz.utc)
+                            jst_time = utc_time.astimezone(pytz.timezone('Asia/Tokyo'))
+                            return jst_time.strftime('%Y-%m-%d %H:%M:%S')
+                        else:
+                            return None
+
                     df_user = pd.DataFrame(filtered_records)  # データフレームの作成
-                    df_user['time_in'] = df_user['time_in'].apply(lambda x: pd.to_datetime(x).strftime('%H:%M:%S'))
-                    df_user['time_out'] = df_user['time_out'].apply(lambda x: pd.to_datetime(x).strftime('%H:%M:%S') if pd.notnull(x) else None)
+                    df_user['time_in'] = df_user['time_in'].apply(lambda x: utc_to_jst(x))
+                    df_user['time_out'] = df_user['time_out'].apply(lambda x: utc_to_jst(x) if pd.notnull(x) else None)
                     df_user['working_hours'] = df_user.apply(lambda row: (datetime.datetime.strptime(row['time_out'], '%H:%M:%S') - datetime.datetime.strptime(row['time_in'], '%H:%M:%S')).total_seconds() / 3600 if row['time_out'] is not None else None, axis=1)
                     
                     user_response = requests.get(f'{backend_url}/user/{selected_user_id}')  # 従業員の時給を取得
