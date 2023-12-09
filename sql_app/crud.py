@@ -63,25 +63,6 @@ def update_attendance_record(db: Session, user_id: int, date: datetime.date, tim
         db.refresh(db_record)
     return db_record
 
-# # 出退勤情報を取得する関数
-# def get_attendance_by_date(db: Session, user_id: int, date: datetime):
-#     return db.query(models.AttendanceRecord).filter(
-#         models.AttendanceRecord.user_id == user_id,
-#         models.AttendanceRecord.date == date
-#     ).first()
-
-# 本日の出退勤情報を取得する関数
-def get_attendance_by_date(db: Session, date: datetime.date):
-    return db.query(models.AttendanceRecord).filter(models.AttendanceRecord.date == date).all()
-
-# # 特定のユーザーの日付範囲指定した出退勤情報を取得する関数
-# def get_user_attendance(db: Session, user_id: int, start_date: date, end_date: date):
-#     return db.query(models.AttendanceRecord).filter(
-#         models.AttendanceRecord.user_id == user_id,
-#         models.AttendanceRecord.date >= start_date,
-#         models.AttendanceRecord.date <= end_date
-#     ).all()
-
 # 特定のユーザーの出退勤情報を取得する関数
 def get_all_user_attendance(db: Session, user_id: int):
     return db.query(models.AttendanceRecord).filter(models.AttendanceRecord.user_id == user_id).all()
