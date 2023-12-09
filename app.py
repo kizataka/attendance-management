@@ -173,7 +173,7 @@ elif selected == '勤怠管理':
                         worksheet = writer_xlsx.sheets["Sheet1"]
                         format1 = workbook.add_format({"num_format": "0.00"})
                         worksheet.set_column("A:A", None, format1)
-                        writer_xlsx.save()
+                        writer_xlsx.close()
                         ##---------------------------------------------##
                         workbook = writer_xlsx.book
                         out_xlsx = byte_xlsx.getvalue()
