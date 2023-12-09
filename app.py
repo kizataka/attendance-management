@@ -129,7 +129,7 @@ elif selected == '勤怠管理':
                             utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S.%f')
                             utc_time = utc_time.replace(tzinfo=pytz.utc)
                             jst_time = utc_time.astimezone(pytz.timezone('Asia/Tokyo'))
-                            return jst_time.strftime('%Y-%m-%d %H:%M:%S')
+                            return jst_time.strftime('%H:%M:%S')
                         else:
                             return None
 
