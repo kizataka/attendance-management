@@ -812,6 +812,9 @@ watchdog==3.0.0 ; python_version >= "3.9" and python_full_version != "3.9.7" and
     --hash=sha256:c9d8c8ec7efb887333cf71e328e39cffbf771d8f8f95d308ea4125bf5f90ba64 \
     --hash=sha256:d00e6be486affb5781468457b21a6cbe848c33ef43f9ea4a73b4882e5f188a44 \
     --hash=sha256:d429c2430c93b7903914e4db9a966c7f2b068dd2ebdd2fa9b9ce094c7d459f33
+xlsxwriter==3.1.9 ; python_version >= "3.9" and python_full_version != "3.9.7" and python_version < "4.0" \
+    --hash=sha256:b61c1a0c786f82644936c0936ec96ee96cd3afb9440094232f7faef9b38689f0 \
+    --hash=sha256:de810bf328c6a4550f4ffd6b0b34972aeb7ffcf40f3d285a0413734f9b63a929
 zipp==3.17.0 ; python_version >= "3.9" and python_full_version != "3.9.7" and python_version < "4.0" \
     --hash=sha256:0e923e726174922dce09c53c59ad483ff7bbb8e572e00c7f7c46b88556409f31 \
     --hash=sha256:84e64a1c28cf7e91ed2078bb8cc8c259cb19b76942096c8d7b84947690cabaf0

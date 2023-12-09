@@ -16,6 +16,7 @@ sqlalchemy = "^2.0.23"
 uvicorn = "^0.24.0.post1"
 alembic = "^1.13.0"
 streamlit-option-menu = "^0.3.6"
+xlsxwriter = "^3.1.9"
 
 
 [build-system]
