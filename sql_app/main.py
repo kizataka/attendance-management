@@ -4,8 +4,15 @@ from datetime import date, datetime
 from typing import List
 from . import crud, models, schemas
 from .database import SessionLocal, engine
+import pytz
 
 models.Base.metadata.create_all(bind=engine)
+
+# 日本時間の現在日付を取得する関数
+def get_jst_date():
+    jst = pytz.timezone('Asia/Tokyo')
+    now_jst = datetime.now(jst)
+    return now_jst.date()
 
 app = FastAPI()
 
@@ -47,14 +54,14 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 # 出勤時刻をDBに登録
 @app.post('/attendance/')
 def create_attendance(attendance: schemas.AttendanceCreate, db: Session = Depends(get_db)):
-    today = date.today()
-    return crud.create_attendance_record(db, attendance.user_id, today,  attendance.time_in)
+    jst_date = get_jst_date()
+    return crud.create_attendance_record(db, attendance.user_id, jst_date,  attendance.time_in)
 
 # 退勤時刻をDBに追加
 @app.patch('/attendance/')
 def update_attendance(attendance: schemas.AttendanceCreate, db: Session = Depends(get_db)):
-    today = date.today()
-    return crud.update_attendance_record(db, attendance.user_id, today, attendance.time_out)
+    jst_date = get_jst_date()
+    return crud.update_attendance_record(db, attendance.user_id, jst_date, attendance.time_out)
 
 # 特定のユーザーの出退勤情報の読み取り
 @app.get('/attendance/{user_id}')
