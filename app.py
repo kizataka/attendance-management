@@ -8,8 +8,8 @@ import datetime
 import math
 import pytz
 
-# backend_url = 'http://127.0.0.1:8000'  # ローカル用
-backend_url = 'https://attendance-management-backend-i4os.onrender.com'  # 本番用
+backend_url = 'http://127.0.0.1:8000'  # ローカル用
+# backend_url = 'https://attendance-management-backend-i4os.onrender.com'  # 本番用
 
 st.title('勤怠管理アプリ')
 
